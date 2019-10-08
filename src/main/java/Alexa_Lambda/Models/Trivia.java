@@ -16,6 +16,8 @@ public class Trivia {
     private String type;
     private String difficulty;
     private String correct_answer;
+    private String usersAnswer;
+
     private List<Incorrect_Answers> incorrect_answers = new ArrayList<>();
 
 
@@ -65,6 +67,7 @@ public class Trivia {
     public String getQuestion () {
         return question;
     }
+    public String getUsersAnswer() {return usersAnswer;}
 
     public void setQuestion (String question) {
         this.question = question;
