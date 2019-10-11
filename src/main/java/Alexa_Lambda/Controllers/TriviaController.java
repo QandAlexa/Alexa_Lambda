@@ -74,7 +74,7 @@ public class TriviaController {
         List<Trivia> returnList = new ArrayList<>();
         int i = 0;
 
-        while (returnList.size() < questions && i < trivias.size()){
+        while (returnList.size() < (questions * 2) && i < trivias.size()){
             if (trivias.get(i).getDifficulty().equals(input.getDifficulty())) {
                 returnList.add(trivias.get(i));
                 String s = trivias.get(i).getQuestion();
@@ -98,18 +98,17 @@ public class TriviaController {
     public String getQuestionsFromQueue() {
         final AmazonSQS sqs = AmazonSQSClientBuilder.defaultClient();
         String queueUrl = sqs.getQueueUrl(QUEUE_NAMEA).getQueueUrl();
+        String returnMessage = "game over, would you like to hear your score||empty";
         ReceiveMessageRequest receiveMessageRequest = new ReceiveMessageRequest(queueUrl);
         //receiveMessageRequest.setMaxNumberOfMessages(1);
         receiveMessageRequest.withMaxNumberOfMessages(1);
         List<Message> messages = sqs.receiveMessage(receiveMessageRequest).getMessages();
-        return messages.get(0).getBody();
-//        List<String> questions = new ArrayList<>();
-//        for(Message msg : messages){
-//            questions.add(msg.getBody());
-//            sqs.deleteMessage(queueUrl, msg.getReceiptHandle());
-//            //sqs.deleteMessage(new DeleteMessageRequest().withQueueUrl(queuename).withReceiptHandle(messageReceiptHandle));
-//        }
-//        return questions;
+        if (messages.size() > 0) {
+            returnMessage = messages.get(0).getBody();
+            sqs.deleteMessage(queueUrl, messages.get(0).getReceiptHandle());
+        }
+
+        return returnMessage;
     }
 
 }
